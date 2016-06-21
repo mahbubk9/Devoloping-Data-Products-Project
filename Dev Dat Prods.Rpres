@@ -1,0 +1,85 @@
+Time Series Forecasting Shiny App Presentation
+========================================================
+author: Mahbub khan
+date: 
+
+
+
+Overview
+========================================================
+### This is a Financial Time Series Forecasting App.
+### Financial Data is loaded from Google using quantmod R package.
+### Twitter, Facebook & Apple time series available at the moment.
+### Users can select start and end date of the data.
+### Users can also select time frame, monthly & quarterly available at present.
+### Clicking "Update view" button will show outputs in three tabs:
+* Time Series tab will display the interactive time series
+* Decomposition tab will display the time series decomposed into trend and seasonality
+* Forecast tab will display the Forecast.
+* There's also a help tab, holding supporting documentation
+
+
+
+
+
+
+
+Time Series Interactive Visualisation
+========================================================
+
+```{r results="asis",echo=FALSE,}
+library(rCharts)
+library(quantmod)
+library(googleVis)
+getSymbols("TWTR",src = "google")
+twtrqtrly<-to.quarterly(TWTR)
+ twtrdf<-as.data.frame(twtrqtrly)
+twtrdf$TWTR.Date<-rownames(twtrdf)
+Line2 <- gvisLineChart(twtrdf, "TWTR.Date", c("TWTR.Open"),
+                       options=list(
+                         series="[{targetAxisIndex: 0}]"
+                                 
+                        
+                       ))
+plot(Line2,"chart")
+
+
+
+
+```
+
+
+
+
+
+
+Time Series Decomposition
+========================================================
+
+
+
+```{r,echo=FALSE}
+library(forecast)
+ts1 <- ts(twtrdf$TWTR.Open,frequency=4)
+
+plot(decompose(ts1))
+    
+
+
+
+```
+
+
+
+
+Time Series Forecasting
+========================================================
+
+
+```{r,echo=FALSE}
+hwts1<-HoltWinters(ts1)
+fcast <- forecast(hwts1)
+    plot(fcast)
+    
+
+```
